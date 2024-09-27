@@ -14,7 +14,7 @@ int main()
 
 	cin >> testCase;
 
-	while(testCase--)
+	while (testCase--)
 	{
 		cin >> l >> r;
 
