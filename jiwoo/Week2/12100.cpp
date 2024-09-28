@@ -28,20 +28,18 @@ inline bool IsOutOfBound(int x, int y)
 void MoveBlock(Direction inDir, int curX, int curY, vector<vector<bool>>& merged)
 {
     int curNum = board[curY][curX];
-    if (curNum == 0) return;  // 빈칸은 처리하지 않음
+    if (curNum == 0) return; 
 
     while (true)
     {
         int nextX = curX + dx[inDir];
         int nextY = curY + dy[inDir];
 
-        // 2.1: 범위 밖이면 중단
         if (IsOutOfBound(nextX, nextY))
             break;
 
         int nextNum = board[nextY][nextX];
 
-        // 2.2.3: 앞에 0이 있으면 이동
         if (nextNum == 0)
         {
             board[nextY][nextX] = board[curY][curX];
@@ -49,15 +47,13 @@ void MoveBlock(Direction inDir, int curX, int curY, vector<vector<bool>>& merged
             curX = nextX;
             curY = nextY;
         }
-        // 2.2.1: 앞에 같은 숫자, 합쳐진 적 없음 -> 합체
         else if (nextNum == board[curY][curX] && !merged[nextY][nextX] && !merged[curY][curX])
         {
             board[nextY][nextX] = board[curY][curX] * 2;
             board[curY][curX] = 0;
-            merged[nextY][nextX] = true;  // 합체된 위치 표시
+            merged[nextY][nextX] = true; 
             break;
         }
-        // 2.2.2: 이동 불가
         else
         {
             break;
@@ -103,7 +99,6 @@ void MoveCol(Direction inDir, int col, vector<vector<bool>>& merged)
 
 void DoSlide(Direction inDir)
 {
-    // 합체 여부를 추적하기 위한 2차원 배열
     vector<vector<bool>> merged(N, vector<bool>(N, false));
 
     switch (inDir)
@@ -139,7 +134,6 @@ void Solution(int num)
 {
     if (num == 5)
     {
-        // 보드에서 최대값 갱신
         for (int i = 0; i < N; i++)
         {
             for (int j = 0; j < N; j++)
@@ -152,10 +146,10 @@ void Solution(int num)
 
     for (int i = 0; i < 4; ++i)
     {
-        vector<vector<int>> save = board;  // 현재 보드 상태 저장
-        DoSlide((Direction)i);             // 각 방향으로 슬라이드
-        Solution(num + 1);                 // 재귀 호출로 다음 단계 진행
-        board = save;                      // 보드 상태 복원
+        vector<vector<int>> save = board;
+        DoSlide((Direction)i);         
+        Solution(num + 1);                 
+        board = save;                     
     }
 }
 
