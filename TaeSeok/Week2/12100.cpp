@@ -76,8 +76,8 @@ void moveBoard(vector<vector<int>>& board, Direction dir) {
         transpositionBoard(board);
         break;
     case DOWN:
-        inversionBoard(board);
         transpositionBoard(board);
+        inversionBoard(board);
         break;
     }
 
