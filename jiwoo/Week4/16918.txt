@@ -1,0 +1,108 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+int R, C, N;
+vector<string> table;
+vector<string> fillOTable;
+
+void Explosion(int x, int y, vector<string>& table)
+{
+	enum { RIGHT, DOWN, UP, LEFT, COUNT = 4 };
+	static int dx[] = { 1,0,0,-1 };
+	static int dy[] = { 0,1,-1,0 };
+
+	table[y][x] = '.';
+
+	for (int i = 0; i < COUNT; i++)
+	{
+		int nextX = x + dx[i];
+		int nextY = y + dy[i];
+
+		if (nextX < 0 || nextX >= C ||
+			nextY < 0 || nextY >= R)
+		{
+			continue;
+		}
+
+		table[nextY][nextX] = '.';
+	}
+}
+
+vector<string> GetFullOTable()
+{
+	vector<string> rst;
+	string str;
+
+	for (int i = 0; i < C; i++)
+	{
+		str += "O";
+	}
+
+	for (int i = 0; i < R; i++)
+	{
+		rst.push_back(str);
+	}
+
+	return rst;
+}
+
+void Solution(int day)
+{
+	if (day == 1)
+	{
+		return;
+	}
+
+	vector<string> rst = fillOTable;
+
+	for (size_t i = 0; i < table.size(); i++)
+	{
+		for (size_t j = 0; j < table[i].size(); j++)
+		{
+			if (table[i][j] == 'O')
+			{
+				Explosion(j, i, rst);
+			}
+		}
+	}
+	table = rst;
+
+
+	Solution(day - 1);
+}
+
+int main()
+{
+	cin >> R >> C >> N;
+	table = vector<string>(R);
+	fillOTable = GetFullOTable();
+
+	for (int row = 0; row < R; ++row)
+	{
+		cin >> table[row];
+	}
+
+	if (N % 2 == 0)
+	{
+
+		for (int i = 0; i < R; i++)
+		{
+			cout << fillOTable[i] << endl;
+		}
+
+		return 0;
+	}
+
+	N = (int)std::ceil(N / 2.f);
+	Solution(N);
+
+	for (int i = 0; i < R; i++)
+	{
+		cout << table[i] << endl;
+	}
+
+
+	return 0;
+}
