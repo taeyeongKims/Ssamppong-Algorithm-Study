@@ -1,0 +1,163 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Sticker
+{
+	void Initialize(const vector<vector<bool>>& inShape)
+	{
+		Shape[0] = inShape;
+
+		// 90 회전
+		{
+			vector<vector<bool>> ret(inShape[0].size(), vector<bool>(inShape.size(), false));
+			for (int i = 0; i < ret.size(); i++)
+			{
+				for (int j = 0; j < ret[0].size(); j++)
+				{
+					ret[i][j] = inShape[inShape.size() - 1 - j][i];
+				}
+			}
+			Shape[1] = ret;
+		}
+
+		// 180 회전
+		{
+			vector<vector<bool>> ret(inShape.size(), vector<bool>(inShape[0].size(), false));
+			for (int i = 0; i < ret.size(); i++)
+			{
+				for (int j = 0; j < ret[0].size(); j++)
+				{
+					ret[i][j] = inShape[inShape.size() - 1 - i][inShape[0].size() - 1 - j];
+				}
+			}
+			Shape[2] = ret;
+		}
+
+		// 270 회전
+		{
+			vector<vector<bool>> ret(inShape[0].size(), vector<bool>(inShape.size(), false));
+			for (int i = 0; i < ret.size(); i++)
+			{
+				for (int j = 0; j < ret[0].size(); j++)
+				{
+					ret[i][j] = inShape[j][inShape[0].size() - 1 - i];
+				}
+			}
+			Shape[3] = ret;
+		}
+	}
+
+	vector<vector<bool>> Shape[4];
+};
+
+int N, M, K; //행, 열
+vector<vector<bool>> table;
+vector<Sticker> stickers;
+int result = 0;
+
+bool FindPosition(const vector<vector<bool>>& sticker, int stickerHeight, int stickerWidth)
+{
+	for (int i = 0; i <= N - stickerHeight; i++)
+	{
+		for (int j = 0; j <= M - stickerWidth; j++)
+		{
+			bool canPlace = true;
+
+			for (int row = 0; row < stickerHeight; row++)
+			{
+				for (int col = 0; col < stickerWidth; col++)
+				{
+					if (sticker[row][col] && table[i + row][j + col])
+					{
+						canPlace = false;
+						break;
+					}
+				}
+				if (!canPlace) break;
+			}
+
+			if (canPlace)
+			{
+				for (int row = 0; row < stickerHeight; row++)
+				{
+					for (int col = 0; col < stickerWidth; col++)
+					{
+						if (sticker[row][col])
+						{
+							table[i + row][j + col] = true;
+						}
+					}
+				}
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void Solution(int stickerIdx)
+{
+	const Sticker& sticker = stickers[stickerIdx];
+
+	for (int i = 0; i < 4; i++)
+	{
+		const vector<vector<bool>>& shape = sticker.Shape[i];
+		int stickerWidth = shape[0].size();
+		int stickerHeight = shape.size();
+
+		if (FindPosition(shape, stickerHeight, stickerWidth))
+		{
+			break;
+		}
+	}
+}
+
+int main()
+{
+	cin >> N >> M >> K;
+	table.resize(N, vector<bool>(M, false));
+	stickers.resize(K);
+
+	for (int i = 0; i < K; i++)
+	{
+		int R, C;
+		cin >> R >> C;
+
+		vector<vector<bool>> mat;
+		mat.resize(R, vector<bool>(C, false));
+
+		for (int i = 0; i < R; i++)
+		{
+			for (int j = 0; j < C; j++)
+			{
+				int input;
+				cin >> input;
+				mat[i][j] = (input == 1) ? true : false;
+			}
+		}
+
+		stickers[i].Initialize(mat);
+	}
+
+	for (int i = 0; i < K; i++)
+	{
+		Solution(i);
+	}
+
+	int result = 0;
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < M; j++)
+		{
+			if (table[i][j])
+			{
+				result++;
+			}
+		}
+	}
+
+	cout << result;
+
+	return 0;
+}

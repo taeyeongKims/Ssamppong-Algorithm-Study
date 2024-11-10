@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> vec;
+int N, M;
+
+int Find(int x)
+{
+    if (vec[x] == -1) return x;
+    return vec[x] = Find(vec[x]);
+}
+
+void Union(int x, int y) {
+    int xp = Find(x);
+    int yp = Find(y);
+    if (xp != yp)
+    {
+        vec[xp] = yp;
+    }
+}
+
+bool IsSameSet(int x, int y)
+{
+    return Find(x) == Find(y);
+}
+
+int main() {
+    cin >> N >> M;
+
+    vec.resize(N + 1, -1);
+
+    for (int i = 1; i <= N; i++)
+     {
+        for (int j = 1; j <= N; j++)
+       {
+            int input;
+            cin >> input;
+            if (input == 1)
+            {
+                Union(i, j);
+            }
+        }
+    }
+
+    vector<int> plan(M);
+    for (int i = 0; i < M; i++)
+    {
+        cin >> plan[i];
+    }
+
+    bool possible = true;
+    for (int i = 1; i < M; i++)
+    {
+        if (!IsSameSet(plan[0], plan[i]))
+        {
+            possible = false;
+            break;
+        }
+    }
+
+    cout << (possible ? "YES" : "NO") << endl;
+    return 0;
+}

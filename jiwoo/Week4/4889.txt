@@ -1,0 +1,45 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stack>
+using namespace std;
+
+string items;
+stack<char> st;
+int testCase = 1;
+
+int main()
+{
+
+	while (true)
+	{
+		cin >> items;
+
+		if (items[0] == '-') { break; }
+
+		while (!st.empty()) { st.pop(); }
+
+		int counter = 0;
+		for (char c : items)
+		{
+			if (st.empty())
+			{
+				if (c == '}') { ++counter; }
+				st.push('{');
+			}
+			else if (c == '}')
+			{
+				st.pop();
+			}
+			else if (c == '{')
+			{
+				st.push('{');
+			}
+		}
+
+		cout << testCase++ << ". " << counter + (int)(st.size() * 0.5f) << '\n';
+	}
+
+
+	return 0;
+}
