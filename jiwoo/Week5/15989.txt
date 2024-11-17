@@ -1,0 +1,47 @@
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <vector>
+#include <climits>
+using namespace std;
+
+int target = 0;
+int dp[4][10001] = {};
+
+int Solution(int useNum, int sum)
+{
+	if (dp[useNum][sum] != -1)
+	{
+		return dp[useNum][sum];
+	}
+
+	if (sum == target)
+	{
+		return 1;
+	}
+
+	int rst = 0;
+
+	for (int i = useNum; i <= 3; i++)
+	{
+		if (sum + i <= target)
+		{
+			rst += Solution(i, sum + i);
+		}
+	}
+	dp[useNum][sum] = rst;
+	return dp[useNum][sum];
+}
+
+int main()
+{
+	int T;
+	cin >> T;
+
+	while (T--)
+	{
+		cin >> target;
+		std::fill(&dp[0][0], &dp[0][0] + 4 * 10001, -1);
+		cout << Solution(1, 0) << '\n';
+	}
+}
