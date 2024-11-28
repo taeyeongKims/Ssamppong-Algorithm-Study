@@ -1,0 +1,44 @@
+#include <iostream>
+#include <deque>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int N, W, L;
+
+int trucks[1001] = {};
+deque<int> dq;
+
+int main()
+{
+	cin >> N >> W >> L;
+	dq = deque<int>(W, 0);
+	for (int i = 0; i < N; i++)
+	{
+		cin >> trucks[i];
+	}
+
+	int leftWeight = L;
+	int timeElapse = 0;
+
+	for (int i = 0; i < N;)
+	{
+		timeElapse++;
+		leftWeight += dq.front();
+		dq.pop_front();
+
+		if(leftWeight >= trucks[i])
+		{
+			leftWeight -= trucks[i];
+			dq.push_back(trucks[i])
+				;
+			i++;
+		}
+		else
+		{
+			dq.push_back(0);
+		}
+	}
+
+	cout << timeElapse + W;
+}
