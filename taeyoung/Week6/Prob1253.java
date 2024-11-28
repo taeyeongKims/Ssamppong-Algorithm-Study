@@ -1,4 +1,4 @@
-package taeyoung.Week6
+package taeyoung.Week6;
 
 import java.io.*;
 import java.util.Arrays;
