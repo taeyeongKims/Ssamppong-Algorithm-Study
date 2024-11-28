@@ -1,0 +1,122 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <set>
+using namespace std;
+
+struct Node
+{
+	friend bool operator<(const Node& inLhs, const Node& inRhs)
+	{
+		if (inLhs.r < inRhs.r)
+			return true;
+		if (inRhs.r < inLhs.r)
+			return false;
+		return inLhs.c < inRhs.c;
+	}
+
+	friend bool operator<=(const Node& inLhs, const Node& inRhs)
+	{
+		return !(inRhs < inLhs);
+	}
+
+	friend bool operator>(const Node& inLhs, const Node& inRhs)
+	{
+		return inRhs < inLhs;
+	}
+
+	friend bool operator>=(const Node& inLhs, const Node& inRhs)
+	{
+		return !(inLhs < inRhs);
+	}
+
+	int r, c;
+};
+
+int N, K, R;
+vector<vector<set<Node>>> roads;
+vector<Node> cows;
+
+bool isConnected(const Node& a, const Node& b)
+{
+    return roads[a.r][a.c].count(b) > 0;
+}
+
+bool bfs(const Node& start, const Node& target)
+{
+    vector<vector<bool>> visited(N + 1, vector<bool>(N + 1, false));
+    queue<Node> q;
+    q.push(start);
+    visited[start.r][start.c] = true;
+
+    static int dr[4] = { -1, 0, 1, 0 };
+    static int dc[4] = { 0, -1, 0, 1 };
+
+    while (!q.empty())
+    {
+        Node current = q.front();
+        q.pop();
+
+        if (current.r == target.r && current.c == target.c)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < 4; ++i) 
+        {
+            int nr = current.r + dr[i];
+            int nc = current.c + dc[i];
+
+            if (nr < 1 || nr > N || nc < 1 || nc > N || visited[nr][nc])
+            {
+                continue;
+            }
+
+            Node next = { nr, nc };
+            if (isConnected(current, next))
+            {
+                continue;
+            }
+
+            q.push(next);
+            visited[nr][nc] = true;
+        }
+    }
+
+    return false;
+}
+
+int main()
+{
+    cin >> N >> K >> R;
+    roads.assign(N + 1, vector<set<Node>>(N + 1));
+
+    for (int i = 0; i < R; ++i)
+    {
+        int r1, c1, r2, c2;
+        cin >> r1 >> c1 >> r2 >> c2;
+        roads[r1][c1].insert({ r2, c2 });
+        roads[r2][c2].insert({ r1, c1 });
+    }
+
+    for (int i = 0; i < K; ++i)
+    {
+        int r, c;
+        cin >> r >> c;
+        cows.push_back({ r, c });
+    }
+
+    int count = 0;
+    for (int i = 0; i < K; ++i) {
+        for (int j = i + 1; j < K; ++j) 
+        {
+            if (!bfs(cows[i], cows[j]))
+            {
+                count++;
+            }
+        }
+    }
+
+    cout << count << endl;
+    return 0;
+}

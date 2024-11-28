@@ -1,0 +1,120 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+std::vector<std::vector<int>> table;
+size_t row, col;
+int dx[4] = { 1,-1,0,0 };
+int dy[4] = { 0,0,1,-1 };
+
+int IsCorrect()
+{
+	std::vector<std::vector<bool>> visited{ row ,std::vector<bool>(col, false) };
+	int mass = 0;
+	struct Pos { int x, y; };
+	std::queue<Pos> q;
+
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			if (visited[i][j]) { continue; }
+			if (table[i][j] == 0) { continue; }
+
+			q.push(Pos{ j, i });
+			visited[i][j] = true;
+
+			while (!q.empty())
+			{
+				Pos pos = q.front();
+				q.pop();
+
+				for (int dir = 0; dir < 4; dir++)
+				{
+					int nx = pos.x + dx[dir];
+					int ny = pos.y + dy[dir];
+
+					if (nx >= 0 && nx < col &&
+						ny >= 0 && ny < row
+						)
+					{
+						if (table[ny][nx] != 0 && !visited[ny][nx])
+						{
+
+							visited[ny][nx] = true;
+							q.push({ nx, ny });
+						}
+					}
+				}
+			}
+
+			++mass;
+		}
+	}
+
+	return mass;
+}
+
+void Melt()
+{
+	std::vector<std::vector<int>> result_table = table;
+
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			if (table[i][j] == 0) continue;
+
+			int zero_counter = 0;
+			for (int dir = 0; dir < 4; dir++)
+			{
+				int x = j + dx[dir];
+				int y = i + dy[dir];
+
+				if (x >= 0 && x < col && y >= 0 && y < row && table[y][x] == 0)
+				{
+					++zero_counter;
+				}
+			}
+
+			result_table[i][j] = max(result_table[i][j] - zero_counter, 0);
+		}
+	}
+	table = result_table;
+}
+
+void Solution(int time)
+{
+	Melt();
+	int mass = IsCorrect();
+	if (mass == 0)
+	{
+		printf("%d", 0);
+		return;
+	}
+	else if (mass >= 2)
+	{
+		printf("%d", time);
+		return;
+	}
+	else
+	{
+		Solution(time + 1);
+	}
+}
+
+int main()
+{
+	cin >> row >> col;
+	table = vector<vector<int>>(row, vector<int>(col, 0));
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			cin >> table[i][j];
+		}
+	}
+
+	Solution(1);
+}

@@ -1,0 +1,53 @@
+#include <iostream>
+#include <deque>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int N;
+int arr[2000] = {};
+
+bool IsGood(int idx, int left, int right)
+{
+	int target = arr[idx];
+	while (left < right)
+	{
+		if (idx == left) { left++; continue; }
+		if (idx == right) { right--; continue; }
+
+		int add = arr[left] + arr[right];
+		if (add > target)
+		{
+			right--;
+		}
+		else if (add < target)
+		{
+			left++;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int main()
+{
+	cin >> N;
+	for (int i=0;i<N;i++)
+	{
+		cin >> arr[i];
+	}
+
+	::sort(arr, arr + N);
+
+	int rst = 0;
+	for (int i=0;i<N;i++)
+	{
+		rst = IsGood(i, 0, N - 1) ? rst + 1 : rst;
+	}
+
+	cout << rst;
+}
